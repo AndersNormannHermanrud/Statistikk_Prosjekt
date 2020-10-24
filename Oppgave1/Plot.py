@@ -11,7 +11,7 @@ import seaborn as sns
 # Fordelinger, modeller for regresjon, qq-plott
 from scipy import stats
 import statsmodels.formula.api as smf
-import statsmodels.api as  sm
+import statsmodels.api as sm
 
 from IPython.core.interactiveshell import InteractiveShell
 InteractiveShell.ast_node_interactivity = "all"
