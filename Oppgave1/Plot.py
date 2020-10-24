@@ -29,4 +29,58 @@ if __name__ == '__main__':
     print(df["Sport"].value_counts())
     df.describe()
     sns.relplot(x='Hoeyde', y='Blodceller', kind='scatter', data=df)
+    plt.show() #Plotter opp
+
+    # kodechunk Steg2-4
+
+    # Steg 2: spesifiser matematisk modell
+    formel = 'Blodceller ~ Hoeyde'
+
+    # Steg 3: Initaliser og tilpass en enkel lineær regresjonsmodell
+    # først initialisere
+    modell = smf.ols(formel, data=df)
+    # deretter tilpasse
+    resultat = modell.fit()
+
+    # Steg 4: Presenter resultater fra den tilpassede regresjonsmodellen
+    print(resultat.summary())
+
+    # kodechunk Steg5
+
+    # Steg 5: Evaluere om modellen passer til dataene
+    # Plotte predikert verdi mot residual
+    sns.scatterplot(resultat.fittedvalues, resultat.resid)
+    plt.ylabel("Residual")
+    plt.xlabel("Predikert verdi")
     plt.show()
+
+    # Lage kvantil-kvantil-plott for residualene
+    sm.qqplot(resultat.resid, line='45', fit=True)
+    plt.ylabel("Kvantiler i residualene")
+    plt.xlabel("Kvantiler i normalfordelingen")
+    plt.show()
+
+    # Kryssplott av Hoeyde mot Blodceller, Vekt mot Blodceller og Hoeyde mot Vekt.
+    # På diagonalen er glattede histogrammer (tetthetsplott) av  Blodceller, Hoeyde og Vekt
+    sns.pairplot(df, vars=['Blodceller', 'Hoeyde', 'Vekt'],
+                 diag_kind='kde',
+                 plot_kws=dict(alpha=0.4))
+    plt.show()
+
+    # Boksplott av Blodceller for hvert Kjoenn og for hver Sport
+
+    ax = sns.boxplot(x="Kjoenn", y="Blodceller", data=df)
+    plt.show()
+    ax = sns.boxplot(x="Sport", y="Blodceller", data=df)
+    plt.show()
+
+    sns.pairplot(df, vars=['Hoeyde', 'Vekt', 'Blodceller'],
+                 hue='Kjoenn',
+                 diag_kind='kde',
+                 plot_kws=dict(alpha=0.4))
+    plt.show()
+
+    ax = sns.boxplot(x="Sport", y="Blodceller", hue="Kjoenn",
+                     data=df, palette="Set3")
+    plt.show()
+
