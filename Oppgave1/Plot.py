@@ -20,9 +20,13 @@ InteractiveShell.ast_node_interactivity = "last_expr"
 if __name__ == '__main__':
     df = pd.read_csv("https://www.math.ntnu.no/emner/IST100x/ISTx1003/Idrett.csv", sep=',')
     df.sort_values(by=['Hoeyde'], inplace=True)  # alt sortert på Hoeyde, bare for gøy
-    print(df)
 
+
+    print(df)
     # Konverter kjønn og idrettsgren til kategory
     df = df.astype({'Kjoenn': 'category', 'Sport': 'category'})
     print(df["Kjoenn"].value_counts())
     print(df["Sport"].value_counts())
+    df.describe()
+    sns.relplot(x='Hoeyde', y='Blodceller', kind='scatter', data=df)
+    plt.show()
