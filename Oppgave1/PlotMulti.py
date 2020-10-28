@@ -16,6 +16,7 @@ import statsmodels.api as sm
 from IPython.core.interactiveshell import InteractiveShell
 InteractiveShell.ast_node_interactivity = "all"
 InteractiveShell.ast_node_interactivity = "last_expr"
+
 if __name__ == '__main__':
     # Lese inn datasettet ved funksjon fra pandas  (df=data frame - vanlig navn å gi et datasett)
     df = pd.read_csv("https://www.math.ntnu.no/emner/IST100x/ISTx1003/Idrett.csv", sep=',')
@@ -28,10 +29,11 @@ if __name__ == '__main__':
     df = df.astype({'Kjoenn': 'category', 'Sport': 'category'})
     print(df["Kjoenn"].value_counts())
     print(df["Sport"].value_counts())
+
     # kodechunk Steg2-4
 
     # Steg 2: spesifiser matematisk modell
-    formel = 'Blodceller ~ Hoeyde'
+    formel = 'Blodceller ~ Hoeyde + Vekt + Kjoenn + Sport'
 
     # Steg 3: Initaliser og tilpass en enkel lineær regresjonsmodell
     # først initialisere
@@ -41,4 +43,44 @@ if __name__ == '__main__':
 
     # Steg 4: Presenter resultater fra den tilpassede regresjonsmodellen
     print(resultat.summary())
-    print(resultat.params())
+
+    # kodechunk Steg5
+
+    # Steg 5: Evaluere om modellen passer til dataene
+    # Plotte predikert verdi mot residual
+    sns.scatterplot(resultat.fittedvalues, resultat.resid)
+    plt.ylabel("Residual")
+    plt.xlabel("Predikert verdi")
+    plt.show()
+
+    # Lage kvantil-kvantil-plott for residualene
+    sm.qqplot(resultat.resid, line='45', fit=True)
+    plt.ylabel("Kvantiler i residualene")
+    plt.xlabel("Kvantiler i normalfordelingen")
+    plt.show()
+
+
+
+    # Kryssplott av Hoeyde mot Blodceller, Vekt mot Blodceller og Hoeyde mot Vekt.
+    # På diagonalen er glattede histogrammer (tetthetsplott) av  Blodceller, Hoeyde og Vekt
+    sns.pairplot(df, vars=['Blodceller', 'Hoeyde', 'Vekt'],
+                 diag_kind='kde',
+                 plot_kws=dict(alpha=0.4))
+    plt.show()
+
+    # Boksplott av Blodceller for hvert Kjoenn og for hver Sport
+
+    ax = sns.boxplot(x="Kjoenn", y="Blodceller", data=df)
+    plt.show()
+    ax = sns.boxplot(x="Sport", y="Blodceller", data=df)
+    plt.show()
+
+    sns.pairplot(df, vars=['Hoeyde', 'Vekt', 'Blodceller'],
+                 hue='Kjoenn',
+                 diag_kind='kde',
+                 plot_kws=dict(alpha=0.4))
+    plt.show()
+
+    ax = sns.boxplot(x="Sport", y="Blodceller", hue="Kjoenn",
+                     data=df, palette="Set3")
+    plt.show()
